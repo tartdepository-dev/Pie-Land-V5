@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Pie Land Chaos</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:"Comic Sans MS",cursive,sans-serif;text-align:center;color:#fff;animation:bgFlash 3s linear infinite;}
+  @keyframes bgFlash{0%{background:#ff00ff;}25%{background:#00ffff;}50%{background:#ffff00;}75%{background:#ff8000;}100%{background:#ff00ff;}}
+  marquee{font-size:3vw;color:#00ff00;text-shadow:1px 1px 0 #000;position:absolute;top:0;width:100%;}
+  h1{font-size:5vw;text-shadow:2px 2px 0 #000,-2px -2px 0 #000;position:absolute;top:10%;left:50%;transform:translateX(-50%);}
+  button{padding:20px 40px;font-size:4vw;border:none;border-radius:10px;background:#ff0000;color:#fff;cursor:pointer;text-shadow:1px 1px 0 #000;position:absolute;bottom:15%;left:50%;transform:translateX(-50%);transition:all .2s;}
+</style>
+</head>
+<body>
+
+<marquee behavior="scroll" direction="left">WELCOME TO PIE LAND!</marquee>
+<h1 id="header">PIE LAND CHAOS</h1>
+<button id="chaosBtn">ACTIVATE PIE CHAOS</button>
+
+<!-- Your own MP3 file here -->
+<audio id="sirenAudio" loop preload="none">
+  <source src="YOURFILE.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<script>
+const button = document.getElementById('chaosBtn');
+const header = document.getElementById('header');
+const siren = document.getElementById('sirenAudio');
+
+const appleLinks = [
+  'https://www.google.com/search?q=apple+pie',
+  'https://www.allrecipes.com/recipe/12682/apple-pie-by-grandma-ople/',
+  'https://www.foodnetwork.com/recipes/apple-pie-recipe',
+  'https://www.bbcgoodfood.com/recipes/apple-pie',
+  'https://www.youtube.com/results?search_query=apple+pie+recipe'
+];
+
+let chaosActive = false;
+let audioStarted = false;
+let chaosInterval;
+
+// helper: random move for header
+function randomMove(element, rangeX=50, rangeY=20){
+  const x = (Math.random()-0.5)*rangeX;
+  const y = (Math.random()-0.5)*rangeY;
+  element.style.transform = `translateX(${x}px) translateY(${y}px)`;
+}
+
+// helper: move button randomly
+function randomMoveButton(btn){
+  const x = Math.random()*80 + 10;
+  const y = Math.random()*70 + 10;
+  btn.style.left = x + '%';
+  btn.style.top = y + '%';
+}
+
+// Toggle chaos mode with reliable audio start
+button.addEventListener('click', () => {
+  chaosActive = !chaosActive;
+  button.textContent = chaosActive ? "DEACTIVATE PIE CHAOS" : "ACTIVATE PIE CHAOS";
+
+  // Start your MP3 reliably after first user click
+  if(!audioStarted){
+    siren.volume = 0.8; // adjust as needed
+    siren.play().catch(e => {
+      console.log("Audio blocked:", e);
+      alert("Browser blocked autoplay. Click the button again to allow audio.");
+    });
+    audioStarted = true;
+  }
+
+  if(chaosActive){
+    chaosInterval = setInterval(()=>{
+      // spawn 1-3 apple pie tabs per second
+      const count = Math.floor(Math.random()*3)+1;
+      for(let i=0;i<count;i++){
+        const url = appleLinks[Math.floor(Math.random()*appleLinks.length)];
+        window.open(url,'_blank','noopener');
+      }
+      // visual chaos
+      randomMove(header,60,30);
+      randomMoveButton(button);
+    },1000);
+  } else {
+    clearInterval(chaosInterval);
+  }
+});
+
+// keep header jittering even when inactive
+setInterval(()=> randomMove(header,50,20), 200);
+</script>
+</body>
+</html>
